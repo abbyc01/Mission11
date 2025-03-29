@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Book } from './types/Book';
+import { Book } from '../types/Book';
+import { useNavigate } from 'react-router-dom';
 
-function BookList() {
+function BookList({ selectedCategories }: { selectedCategories: string[] }) {
   const [books, setBooks] = useState<Book[]>([]);
   const [pageSize, setPageSize] = useState<number>(10);
   const [pageNum, setPageNum] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchBooks = async () => {
+      const categoryParams = selectedCategories
+        .map((cat) => `bookTypes=${encodeURIComponent(cat)}`)
+        .join('&');
+
       const response = await fetch(
-        `https://localhost:5000/api/Book?pageHowMany=${pageSize}&pageNum=${pageNum}`
+        `https://localhost:5000/api/Book?pageHowMany=${pageSize}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}`
       );
       const data = await response.json();
       setBooks(data.books);
@@ -19,7 +25,7 @@ function BookList() {
     };
 
     fetchBooks();
-  }, [pageSize, pageNum, totalItems]);
+  }, [pageSize, pageNum, totalItems, selectedCategories]);
   return (
     <>
       <h1>Book List</h1>
@@ -50,6 +56,13 @@ function BookList() {
                 <strong>Price:</strong> {b.price}
               </li>
             </ul>
+
+            <button
+              className="btn btn-success"
+              onClick={() => navigate(`/add/${b.title}/${b.bookID}/${b.price}`)}
+            >
+              View Book
+            </button>
           </div>
         </div>
       ))}
