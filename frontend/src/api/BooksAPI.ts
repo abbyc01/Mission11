@@ -6,7 +6,7 @@ interface FetchBooksResponse {
 }
 
 const API_Url =
-  'hhttps://onlinebookstore-cummings-backend.azurewebsites.net/api/Book';
+  'https://onlinebookstore-cummings-backend.azurewebsites.net/api/Book';
 
 export const fetchBooks = async (
   pageSize: number,
